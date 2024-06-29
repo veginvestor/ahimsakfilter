@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahimsak Investment Indicator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background-image: url('https://img.freepik.com/premium-vector/stock-market-economic-graph-with-diagrams-business-financial-concepts-reports-abstract-technology-communication-concept-background_29865-1321.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            min-height: 100vh; /* Ensure full viewport height */
+            position: relative; /* Position relative for logo */
+        }
+        .quotes {
+            display: none;
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .quote {
+            margin-bottom: 10px;
+        }
+        #input-container {
+            display: none;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+        }
+        .suggestion-item {
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+        .green-category {
+            color: green;
+        }
+        .red-category {
+            color: red;
+        }
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: #00FF00;
+            z-index: 9999;
+            display: none;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subheader {
+            font-size: 1.5em;
+            margin-top: -10px;
+            color: #bbb;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="container">
+    <div class="header">
+        <h1>Ahimsak Investment Indicator</h1>
+        <p class="subheader">Gauge your investments</p>
+    </div>
+
+    <img src="https://aimofindia.my.canva.site/images/8fc9db000ef7835fb7947f970b4e78b3.png" alt="AIM Logo" class="logo">
+
+    <!-- Quotes Section -->
+    <div id="quotes" class="quotes"></div>
+
+    <!-- Input Section -->
+    <div id="input-container">
+        <div class="form-group">
+            <label for="company">Enter Company Name:</label>
+            <input type="text" class="form-control" id="company" placeholder="Start typing...">
+        </div>
+        <div id="suggestions" class="list-group"></div>
+        <div id="results" class="card">
+            <div class="card-body">
+                <h5 class="card-title" id="company-name"></h5>
+                <p class="card-text" id="industry"></p>
+                <p class="card-text" id="category"></p>
+            </div>
+        </div>
+        <div id="no-match" class="card text-white bg-secondary mb-3" style="display: none;">
+            <div class="card-body">
+                <h5 class="card-title">No match found</h5>
+                <p class="card-text">Sorry, the company is not categorized by AIM. We will review it and update our records.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include PapaParse for CSV parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+    // Google Drive URLs for the CSV files
+    const equityListUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://drive.google.com/uc?export=download&id=1gqVWNcOkAX9sn2icc2jU9qomN0Jpmfsn');
+    const ahimsakListUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://drive.google.com/uc?export=download&id=13QfE7MqQxBavedhPmYPXamxIf09PpAYd');
+
+    // Quotes for motivation
+    const quotes = [
+        "Investing ethically is the first step towards a cruelty-free world.",
+        "Your financial decisions can save lives. Choose cruelty-free investments.",
+        "Every rupee you invest has the power to change the world. Invest in kindness."
+    ];
+
+    let equityList = [];
+    let ahimsakList = [];
+    let progressBarWidth = 0;
+
+    function fetchCSV(url) {
+        return new Promise((resolve, reject) => {
+            $.get(url, function(response) {
+                const base64Index = response.contents.indexOf('base64,') + 'base64,'.length;
+                const decodedData = atob(response.contents.substring(base64Index));
+
+                Papa.parse(decodedData, {
+                    header: true,
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
+                });
+            }).fail(function(error) {
+                reject(error);
+            });
+        });
+    }
+
+    function normalizeCompanyName(name) {
+        if (!name) return '';
+        return name.trim().replace(/\.$/, '').toLowerCase();
+    }
+
+    function toCamelCase(str) {
+        return str.replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function showQuotesOneByOne() {
+        let index = 0;
+        $('#quotes').show();
+        const interval = setInterval(() => {
+            $('#quotes').empty().append('<div class="quote">' + quotes[index] + '</div>').fadeIn();
+            index++;
+            if (index === quotes.length) {
+                index = 0;
+            }
+        }, 3000);
+
+        return interval;
+    }
+
+    function hideQuotes() {
+        $('#quotes').fadeOut();
+    }
+
+    function showInput() {
+        $('#input-container').fadeIn();
+    }
+
+    function updateProgressBar() {
+        progressBarWidth += 10;
+        $('#progress-bar').width(progressBarWidth + '%');
+    }
+
+    $(document).ready(async function() {
+        try {
+            const quoteInterval = showQuotesOneByOne();
+            $('#progress-bar').show();
+
+            const progressBarInterval = setInterval(updateProgressBar, 500);
+
+            equityList = await fetchCSV(equityListUrl);
+            ahimsakList = await fetchCSV(ahimsakListUrl);
+
+            equityList = equityList.filter(company => company['NAME OF COMPANY']).map(company => ({
+                ...company,
+                'NAME OF COMPANY': normalizeCompanyName(company['NAME OF COMPANY'])
+            }));
+
+            ahimsakList = ahimsakList.filter(company => company['Company Name']).map(company => ({
+                ...company,
+                'Company Name': normalizeCompanyName(company['Company Name'])
+            }));
+
+            clearInterval(quoteInterval);
+            clearInterval(progressBarInterval);
+
+            hideQuotes();
+            $('#progress-bar').fadeOut();
+            showInput();
+
+            $('#company').on('input', function() {
+                const query = normalizeCompanyName($(this).val());
+
+                $('#suggestions').empty();
+                if (query.length > 0) {
+                    const suggestions = equityList.filter(company => company['NAME OF COMPANY'].includes(query)).slice(0, 10);
+
+                    suggestions.forEach(item => {
+                        $('#suggestions').append('<a href="#" class="list-group-item list-group-item-action suggestion-item">' + toCamelCase(item['NAME OF COMPANY']) + '</a>');
+                    });
+
+                    $('#no-match').hide(); // Hide no-match message if suggestions are shown
+                } else {
+                    $('#no-match').hide(); // Hide no-match message if input is empty
+                }
+            });
+
+            $(document).on('click', '.suggestion-item', function() {
+                const companyName = normalizeCompanyName($(this).text());
+
+                $('#company').val(companyName);
+                $('#suggestions').empty();
+
+                const ahimsakData = ahimsakList.find(company => company['Company Name'] === companyName);
+
+                if (ahimsakData) {
+                    $('#company-name').text(`Company Name: ${toCamelCase(ahimsakData['Company Name'])}`);
+                    $('#industry').text(`Industry: ${ahimsakData['Industry']}`);
+                    $('#category').text(`Category: ${ahimsakData['Category']}`);
+
+                    if (ahimsakData['Category'].toLowerCase() === 'green') {
+                        $('#results').removeClass('red-category').addClass('green-category');
+                    } else if (ahimsakData['Category'].toLowerCase() === 'red') {
+                        $('#results').removeClass('green-category').addClass('red-category');
+                    }
+                } else {
+                    $('#company-name').text('');
+                    $('#industry').text('');
+                    $('#category').text('');
+                    $('#results').removeClass('green-category red-category');
+                    $('#no-match').show(); // Display no-match message when no ahimsak data found
+                }
+
+                $('#results').show();
+            });
+
+            $('#company').on('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    const companyName = normalizeCompanyName($(this).val());
+                    const ahimsakData = ahimsakList.find(company => company['Company Name'] === companyName);
+
+                    if (ahimsakData) {
+                        $('#company-name').text(`Company Name: ${toCamelCase(ahimsakData['Company Name'])}`);
+                        $('#industry').text(`Industry: ${ahimsakData['Industry']}`);
+                        $('#category').text(`Category: ${ahimsakData['Category']}`);
+
+                        if (ahimsakData['Category'].toLowerCase() === 'green') {
+                            $('#results').removeClass('red-category').addClass('green-category');
+                        } else if (ahimsakData['Category'].toLowerCase() === 'red') {
+                            $('#results').removeClass('green-category').addClass('red-category');
+                        }
+                    } else {
+                        $('#company-name').text('');
+                        $('#industry').text('');
+                        $('#category').text('');
+                        $('#results').removeClass('green-category red-category');
+                        $('#no-match').show(); // Display no-match message when no ahimsak data found
+                    }
+
+                    $('#results').show();
+                }
+            });
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    });
+</script>
+</body>
+</html>
