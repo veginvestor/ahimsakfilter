@@ -12,8 +12,13 @@
             background-size: cover;
             background-position: center;
             color: #fff;
-            min-height: 100vh; /* Ensure full viewport height */
-            position: relative; /* Position relative for logo */
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: auto;
         }
         .quotes {
             display: none;
@@ -41,6 +46,9 @@
         .red-category {
             color: red;
         }
+        .grey-background {
+            background-color: #555;
+        }
         #progress-bar {
             position: fixed;
             top: 0;
@@ -59,12 +67,29 @@
             margin-top: -10px;
             color: #bbb;
         }
-        .logo {
+        .color-transform {
+            transition: background-color 0.3s ease-in-out;
+        }
+        .green-background {
+            background-color: #3cba54; /* Green */
+        }
+        .red-background {
+            background-color: #db3236; /* Red */
+        }
+        .particles {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 100px;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .green-particles {
+            background-image: url('https://cdn.pixabay.com/photo/2015/03/26/09/43/forest-690270_960_720.jpg'); /* Green background image */
+        }
+        .red-particles {
+            background-image: url('https://cdn.pixabay.com/photo/2016/02/05/17/53/cosmos-1183959_960_720.jpg'); /* Red background image */
         }
     </style>
 </head>
@@ -75,12 +100,9 @@
         <h1>Ahimsak Investment Indicator</h1>
         <p class="subheader">Gauge your investments</p>
     </div>
-
     <img src="https://aimofindia.my.canva.site/images/8fc9db000ef7835fb7947f970b4e78b3.png" alt="AIM Logo" class="logo">
-
     <!-- Quotes Section -->
     <div id="quotes" class="quotes"></div>
-
     <!-- Input Section -->
     <div id="input-container">
         <div class="form-group">
@@ -88,17 +110,11 @@
             <input type="text" class="form-control" id="company" placeholder="Start typing...">
         </div>
         <div id="suggestions" class="list-group"></div>
-        <div id="results" class="card">
+        <div id="results" class="card grey-background">
             <div class="card-body">
                 <h5 class="card-title" id="company-name"></h5>
                 <p class="card-text" id="industry"></p>
                 <p class="card-text" id="category"></p>
-            </div>
-        </div>
-        <div id="no-match" class="card text-white bg-secondary mb-3" style="display: none;">
-            <div class="card-body">
-                <h5 class="card-title">No match found</h5>
-                <p class="card-text">Sorry, the company is not categorized by AIM. We will review it and update our records.</p>
             </div>
         </div>
     </div>
@@ -218,10 +234,6 @@
                     suggestions.forEach(item => {
                         $('#suggestions').append('<a href="#" class="list-group-item list-group-item-action suggestion-item">' + toCamelCase(item['NAME OF COMPANY']) + '</a>');
                     });
-
-                    $('#no-match').hide(); // Hide no-match message if suggestions are shown
-                } else {
-                    $('#no-match').hide(); // Hide no-match message if input is empty
                 }
             });
 
@@ -238,17 +250,21 @@
                     $('#industry').text(`Industry: ${ahimsakData['Industry']}`);
                     $('#category').text(`Category: ${ahimsakData['Category']}`);
 
+                    $('#results').addClass('color-transform');
+                    $('#results').removeClass('red-background').removeClass('green-background');
+
                     if (ahimsakData['Category'].toLowerCase() === 'green') {
-                        $('#results').removeClass('red-category').addClass('green-category');
+                        $('#results').addClass('green-background');
+                        $('.particles').addClass('green-particles').removeClass('red-particles');
                     } else if (ahimsakData['Category'].toLowerCase() === 'red') {
-                        $('#results').removeClass('green-category').addClass('red-category');
+                        $('#results').addClass('red-background');
+                        $('.particles').addClass('red-particles').removeClass('green-particles');
                     }
                 } else {
-                    $('#company-name').text('');
+                    $('#company-name').text('Sorry, the company is not categorized by AIM. We will review it and update our records.');
                     $('#industry').text('');
                     $('#category').text('');
-                    $('#results').removeClass('green-category red-category');
-                    $('#no-match').show(); // Display no-match message when no ahimsak data found
+                    $('#results').addClass('grey-background').removeClass('red-background').removeClass('green-background').removeClass('color-transform');
                 }
 
                 $('#results').show();
@@ -264,17 +280,21 @@
                         $('#industry').text(`Industry: ${ahimsakData['Industry']}`);
                         $('#category').text(`Category: ${ahimsakData['Category']}`);
 
+                        $('#results').addClass('color-transform');
+                        $('#results').removeClass('red-background').removeClass('green-background');
+
                         if (ahimsakData['Category'].toLowerCase() === 'green') {
-                            $('#results').removeClass('red-category').addClass('green-category');
+                            $('#results').addClass('green-background');
+                            $('.particles').addClass('green-particles').removeClass('red-particles');
                         } else if (ahimsakData['Category'].toLowerCase() === 'red') {
-                            $('#results').removeClass('green-category').addClass('red-category');
+                            $('#results').addClass('red-background');
+                            $('.particles').addClass('red-particles').removeClass('green-particles');
                         }
                     } else {
-                        $('#company-name').text('');
+                        $('#company-name').text('Sorry, the company is not categorized by AIM. We will review it and update our records.');
                         $('#industry').text('');
                         $('#category').text('');
-                        $('#results').removeClass('green-category red-category');
-                        $('#no-match').show(); // Display no-match message when no ahimsak data found
+                        $('#results').addClass('grey-background').removeClass('red-background').removeClass('green-background').removeClass('color-transform');
                     }
 
                     $('#results').show();
@@ -285,5 +305,7 @@
         }
     });
 </script>
+<div class="particles green-particles"></div>
+<div class="particles red-particles"></div>
 </body>
 </html>
