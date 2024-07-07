@@ -1,0 +1,111 @@
+/* Body styles */
+body {
+    padding: 20px;
+    background-image: url('https://img.freepik.com/premium-vector/stock-market-economic-graph-with-diagrams-business-financial-concepts-reports-abstract-technology-communication-concept-background_29865-1321.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    color: #fff;
+}
+
+/* Logo position and size */
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 80px;
+    height: auto;
+}
+
+/* Quotes styling */
+.quotes {
+    display: none;
+    font-size: 1.2em;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.quote {
+    margin-bottom: 10px;
+}
+
+/* Input container initially hidden */
+#input-container {
+    display: none;
+}
+
+/* Results card styling */
+#results {
+    margin-top: 20px;
+    display: none;
+    padding: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+    color: white; /* Set text to white for contrast */
+}
+
+/* Background color classes */
+.green-background {
+    background-color: #3cba54 !important; /* Green */
+    color: white !important; /* Ensuring text contrast */
+}
+
+.red-background {
+    background-color: #db3236 !important; /* Red */
+    color: white !important; /* Ensuring text contrast */
+}
+
+.grey-background {
+    background-color: #555 !important; /* Grey */
+    color: white !important; /* Ensuring text contrast */
+}
+
+/* Suggestion item styling */
+.suggestion-item {
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+/* Progress bar styling */
+#progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background-color: #00FF00;
+    z-index: 9999;
+    display: none;
+}
+
+/* Header and subheader styling */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.subheader {
+    font-size: 1.5em;
+    margin-top: -10px;
+    color: #bbb;
+}
+
+/* Particles background styling */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.green-particles {
+    background-image: url('https://cdn.pixabay.com/photo/2015/03/26/09/43/forest-690270_960_720.jpg'); /* Green background image */
+}
+
+.red-particles {
+    background-image: url('https://cdn.pixabay.com/photo/2016/02/05/17/53/cosmos-1183959_960_720.jpg'); /* Red background image */
+}
