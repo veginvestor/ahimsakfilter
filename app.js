@@ -1,15 +1,16 @@
-// Google Drive URLs for the CSV files
-const equityListUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://drive.google.com/uc?export=download&id=1gqVWNcOkAX9sn2icc2jU9qomN0Jpmfsn');
+// Google Drive URL for the CSV file
 const ahimsakListUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://drive.google.com/uc?export=download&id=13QfE7MqQxBavedhPmYPXamxIf09PpAYd');
 
 // Quotes for motivation
 const quotes = [
-    "Investing ethically is the first step towards a cruelty-free world.",
-    "Your financial decisions can save lives. Choose cruelty-free investments.",
-    "Every rupee you invest has the power to change the world. Invest in kindness."
+    "Don't kill animals for money, if not for food.",
+    "Your financial decisions can save million lives every second. Choose cruelty-free investments.",
+    "As we categorize our food into veg and non-veg, let's categorize our investments into ethical and non-ethical, making conscious, wise choices",
+    "Choosing green meals supports our health, choosing green investments supports a healthier planet.",
+    "As we read labels to avoid animal products in our food, let's research to avoid unethical practices in our investments.",
+    "Our conscious food choices reflect our values; let our conscious investment choices reflect our commitment to a cruelty-free world."
 ];
 
-let equityList = [];
 let ahimsakList = [];
 let progressBarWidth = 0;
 
@@ -56,7 +57,7 @@ function showQuotesOneByOne() {
         if (index === quotes.length) {
             index = 0;
         }
-    }, 3000);
+    }, 5000);
 
     return interval;
 }
@@ -114,16 +115,10 @@ $(document).ready(async function() {
 
         const progressBarInterval = setInterval(updateProgressBar, 500);
 
-        // Fetch and parse CSV files
-        equityList = await fetchCSV(equityListUrl);
+        // Fetch and parse the CSV file
         ahimsakList = await fetchCSV(ahimsakListUrl);
 
         // Normalize and filter company names
-        equityList = equityList.filter(company => company['NAME OF COMPANY']).map(company => ({
-            ...company,
-            'NAME OF COMPANY': normalizeCompanyName(company['NAME OF COMPANY'])
-        }));
-
         ahimsakList = ahimsakList.filter(company => company['Company Name']).map(company => ({
             ...company,
             'Company Name': normalizeCompanyName(company['Company Name'])
@@ -144,10 +139,10 @@ $(document).ready(async function() {
 
             $('#suggestions').empty();
             if (query.length > 0) {
-                const suggestions = equityList.filter(company => company['NAME OF COMPANY'].includes(query)).slice(0, 10);
+                const suggestions = ahimsakList.filter(company => company['Company Name'].includes(query)).slice(0, 10);
 
                 suggestions.forEach(item => {
-                    $('#suggestions').append('<a href="#" class="list-group-item list-group-item-action suggestion-item">' + toCamelCase(item['NAME OF COMPANY']) + '</a>');
+                    $('#suggestions').append('<a href="#" class="list-group-item list-group-item-action suggestion-item">' + toCamelCase(item['Company Name']) + '</a>');
                 });
             }
         });
