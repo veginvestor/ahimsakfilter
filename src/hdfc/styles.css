@@ -1,0 +1,70 @@
+/* Body styles */
+body {
+    padding: 20px;
+    background-color: #f4f4f9; /* Light warm background color */
+    color: #333; /* Dark text color for better contrast */
+}
+
+/* Container styling */
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: auto;
+}
+
+/* Header styles */
+h1, h3 {
+    color: #222;
+    text-align: center;
+}
+
+/* Collapsible content */
+.collapsible-content {
+    display: none;
+}
+
+.collapsible-content.expanded {
+    display: inline;
+}
+
+.show-more {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Navigation buttons */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:disabled {
+    background-color: #ccc;
+}
+
+/* Search box */
+.search-box {
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
