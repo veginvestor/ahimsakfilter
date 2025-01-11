@@ -90,10 +90,10 @@ function handleCompanySelection(companyName) {
         $('#industry').text(`Industry: ${ahimsakData['Industry']}`);
         $('#category').text(`Category: ${ahimsakData['Category']}`);
 
-        if (ahimsakData['Category'].toLowerCase() === 'ahinsak') {
+        if (ahimsakData['Category'].toLowerCase() === 'ahinsak' || ahimsakData['Category'].toLowerCase() === 'somewhat ahinsak') {
             $('#results').addClass('green-background');
             $('.particles').addClass('green-particles').removeClass('red-particles');
-        } else if (ahimsakData['Category'].toLowerCase() === 'hinsak') {
+        } else if (ahimsakData['Category'].toLowerCase() === 'hinsak' || ahimsakData['Category'].toLowerCase() === 'somewhat hinsak') {
             $('#results').addClass('red-background');
             $('.particles').addClass('red-particles').removeClass('green-particles');
         }
